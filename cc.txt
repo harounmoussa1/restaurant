@@ -1,0 +1,199 @@
+📘 CAHIER DES CHARGES – PROJET DÉMO TECHNIQUE
+Site Web → Backend → Application Locale → Impression
+1. 🎯 Objectif du projet
+
+L’objectif est de développer un exemple technique fonctionnel permettant :
+
+d’envoyer des données depuis un site web
+
+de les traiter via un backend
+
+de les transmettre à une application locale
+
+d’imprimer automatiquement ces données sur une imprimante connectée
+
+📌 Le projet sert uniquement à :
+
+comprendre l’architecture
+
+tester l’impression locale
+
+valider la communication web ↔ app locale
+
+2. 📦 Périmètre du projet
+Inclus
+
+✅ Site web (frontend simple)
+✅ Backend (API)
+✅ Base de données simple
+✅ Application locale (desktop ou script)
+✅ Impression automatique
+
+Exclus
+
+❌ QR code
+❌ Contexte métier (restaurant, shop, etc.)
+❌ Paiement
+❌ Sécurité avancée
+❌ Multi-utilisateurs
+
+3. 🧩 Architecture globale
+Navigateur Web
+   ↓ HTTP
+Site Web (Frontend)
+   ↓ API
+Backend (Serveur)
+   ↓ WebSocket
+Application Locale (PC)
+   ↓
+Imprimante
+
+4. 👥 Acteurs
+Acteur	Rôle
+Utilisateur Web	Envoie une demande depuis le site
+Backend	Reçoit et stocke les données
+App Locale	Reçoit et imprime automatiquement
+5. 🌐 Site Web (Frontend)
+Description
+
+Un site web très simple permettant d’envoyer un message à imprimer.
+
+Fonctionnalités
+
+Champ texte (message)
+
+Bouton “Envoyer”
+
+Message de confirmation
+
+Exemple d’interface
+[ Texte à imprimer ]
+[ Envoyer ]
+
+6. 🧠 Backend (Serveur)
+Technologies suggérées
+
+Node.js
+
+Express.js
+
+WebSocket (Socket.io)
+
+API requise
+🔹 POST /print
+
+Reçoit un message à imprimer
+
+{
+  "content": "Hello world"
+}
+
+Rôles du backend
+
+Enregistrer la demande en base
+
+Envoyer le message à l’application locale
+
+Gérer l’état (envoyé / imprimé)
+
+7. 🗄️ Base de données
+Table print_jobs
+Champ	Type
+id	int
+content	text
+status	string
+created_at	datetime
+8. 🖥️ Application Locale (Desktop / Script)
+Description
+
+Une application locale installée sur le PC connecté à l’imprimante.
+
+Responsabilités
+
+Se connecter au backend via WebSocket
+
+Recevoir les messages à imprimer
+
+Lancer l’impression automatiquement
+
+Confirmer l’impression au backend
+
+Contraintes
+
+Aucune interface utilisateur complexe
+
+Fonctionnement automatique
+
+Aucune action humaine requise
+
+9. 🖨️ Impression
+Matériel
+
+Imprimante connectée au PC (USB ou réseau)
+
+Comportement attendu
+
+Impression automatique dès réception
+
+Impression une seule fois par message
+
+Gestion basique des erreurs (log)
+
+Exemple imprimé
+--------------------
+MESSAGE À IMPRIMER
+
+Hello world
+
+Date: 2025-xx-xx
+--------------------
+
+10. 🔄 Flux de fonctionnement
+
+L’utilisateur ouvre le site web
+
+Il saisit un message
+
+Il clique sur “Envoyer”
+
+Le backend reçoit et stocke le message
+
+Le backend l’envoie à l’app locale
+
+L’app locale imprime le message
+
+L’app confirme l’impression
+
+11. 🧪 Critères de validation
+
+Le projet est validé si :
+
+Le site web envoie un message
+
+Le backend reçoit et stocke le message
+
+L’app locale reçoit le message
+
+L’imprimante imprime automatiquement
+
+Aucun clic n’est requis côté PC
+
+12. 🚀 Évolutions possibles (hors périmètre)
+
+File d’attente avancée
+
+Retry automatique
+
+Interface desktop
+
+Sécurité
+
+Cas métier réel (restaurant, logistique, etc.)
+
+13. 🏁 Conclusion
+
+Ce projet est une démo technique minimale, conçue pour implémenter le principe fondamental :
+
+Web → Backend → Application Locale → Impression
+
+Il constitue une base solide pour des projets plus complexes.

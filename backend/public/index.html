@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Print Demo</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--text);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        #status {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            display: none;
+            text-align: center;
+        }
+
+        .success {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>🖨️ Impression Cuisine</h1>
+        <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" placeholder="Entrez la commande ou le message..."></textarea>
+        </div>
+        <button id="sendBtn" onclick="sendPrintJob()">Envoyer</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        async function sendPrintJob() {
+            const messageInput = document.getElementById('message');
+            const statusDiv = document.getElementById('status');
+            const btn = document.getElementById('sendBtn');
+            const content = messageInput.value.trim();
+
+            if (!content) return;
+
+            btn.disabled = true;
+            btn.textContent = 'Envoi...';
+            statusDiv.style.display = 'none';
+
+            try {
+                // Use relative URL so it works both on localhost and deployed version
+                const response = await fetch('/print', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ content }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusDiv.textContent = '✅ Commande envoyée avec succès !';
+                    statusDiv.className = 'success';
+                    messageInput.value = '';
+                } else {
+                    throw new Error(data.error || 'Erreur inconnue');
+                }
+            } catch (error) {
+                statusDiv.textContent = '❌ Erreur: ' + error.message;
+                statusDiv.className = 'error';
+            } finally {
+                statusDiv.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Envoyer';
+
+                // Hide success message after 3 seconds
+                if (statusDiv.className === 'success') {
+                    setTimeout(() => {
+                        statusDiv.style.display = 'none';
+                    }, 3000);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
