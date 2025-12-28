@@ -4,171 +4,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant Print Demo</title>
+    <title>Restaurant Command</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb;
-            --background: #f8fafc;
+            --primary: #ea580c;
+            --primary-dark: #c2410c;
+            --background: #fff7ed;
             --surface: #ffffff;
             --text: #1e293b;
+            --gray: #64748b;
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Outfit', 'Segoe UI', sans-serif;
             background-color: var(--background);
             color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
             margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
         }
 
-        .card {
-            background: var(--surface);
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        .container {
             width: 100%;
-            max-width: 400px;
+            max-width: 800px;
+            display: grid;
+            gap: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
+            color: var(--primary);
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        p.subtitle {
+            color: var(--gray);
+            margin-top: 5px;
+        }
+
+        /* Menu Grid */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+        }
+
+        .menu-item {
+            background: var(--surface);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
             text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, border 0.2s;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        .item-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .item-name {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Cart Section */
+        .cart-section {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 -4px 20px rgb(0 0 0 / 0.1);
+            position: sticky;
+            bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .cart-items {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 0.95rem;
+            border-bottom: 1px dashed #f1f5f9;
+        }
+
+        .cart-total {
+            font-size: 1.25rem;
+            font-weight: 800;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
             color: var(--text);
         }
 
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.5rem;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 100px;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        button {
+        button.checkout-btn {
             width: 100%;
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
             cursor: pointer;
             transition: background-color 0.2s;
         }
 
-        button:hover {
-            background-color: #1d4ed8;
+        button.checkout-btn:hover {
+            background-color: var(--primary-dark);
         }
 
-        button:disabled {
-            opacity: 0.7;
+        button.checkout-btn:disabled {
+            background-color: var(--gray);
             cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .empty-cart-msg {
+            text-align: center;
+            color: var(--gray);
+            padding: 20px;
         }
 
         #status {
-            margin-top: 1rem;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            display: none;
             text-align: center;
+            margin-top: 10px;
+            font-weight: 600;
         }
 
         .success {
-            background-color: #dcfce7;
             color: #166534;
         }
 
         .error {
-            background-color: #fee2e2;
             color: #991b1b;
         }
     </style>
 </head>
 
 <body>
-    <div class="card">
-        <h1>🖨️ Impression Cuisine</h1>
-        <div class="form-group">
-            <label for="message">Message</label>
-            <textarea id="message" placeholder="Entrez la commande ou le message..."></textarea>
+    <div class="container">
+        <header>
+            <h1>🍔 Burger Restaurant</h1>
+            <p class="subtitle">Cliquez sur les articles pour les ajouter au panier</p>
+        </header>
+
+        <div class="menu-grid" id="menuGrid">
+            <!-- Items generated by JS -->
         </div>
-        <button id="sendBtn" onclick="sendPrintJob()">Envoyer</button>
-        <div id="status"></div>
+
+        <div class="cart-section">
+            <div class="cart-header">
+                <h3>🛒 Votre Panier</h3>
+                <span id="itemCount">0 articles</span>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <div class="empty-cart-msg">Votre panier est vide</div>
+            </div>
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="totalPrice">0.00 €</span>
+            </div>
+            <button id="sendBtn" class="checkout-btn" onclick="sendOrder()" disabled>Confirmer la commande</button>
+            <div id="status"></div>
+        </div>
     </div>
 
     <script>
-        async function sendPrintJob() {
-            const messageInput = document.getElementById('message');
-            const statusDiv = document.getElementById('status');
-            const btn = document.getElementById('sendBtn');
-            const content = messageInput.value.trim();
+        // Menu Data
+        const menu = [
+            { id: 1, name: 'Double Cheese', price: 9.50, icon: '🍔' },
+            { id: 2, name: 'Mega Burger', price: 12.00, icon: '🥓' },
+            { id: 3, name: 'Veggie Burger', price: 10.50, icon: '🥗' },
+            { id: 4, name: 'Frites', price: 3.50, icon: '🍟' },
+            { id: 5, name: 'Onion Rings', price: 4.00, icon: '🧅' },
+            { id: 6, name: 'Coca Cola', price: 2.50, icon: '🥤' },
+            { id: 7, name: 'Eau Minérale', price: 2.00, icon: '💧' },
+            { id: 8, name: 'Glace Vanille', price: 4.50, icon: '🍦' },
+        ];
 
-            if (!content) return;
+        let cart = {};
+
+        // Init Menu
+        const menuGrid = document.getElementById('menuGrid');
+        menu.forEach(item => {
+            const el = document.createElement('div');
+            el.className = 'menu-item';
+            el.onclick = () => addToCart(item);
+            el.innerHTML = `
+                <div class="item-icon">${item.icon}</div>
+                <div>
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-price">${item.price.toFixed(2)} €</div>
+                </div>
+            `;
+            menuGrid.appendChild(el);
+        });
+
+        function addToCart(item) {
+            if (cart[item.id]) {
+                cart[item.id].qty++;
+            } else {
+                cart[item.id] = { ...item, qty: 1 };
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cartItemsEl = document.getElementById('cartItems');
+            const totalEl = document.getElementById('totalPrice');
+            const countEl = document.getElementById('itemCount');
+            const btn = document.getElementById('sendBtn');
+
+            cartItemsEl.innerHTML = '';
+            let total = 0;
+            let count = 0;
+
+            const items = Object.values(cart);
+
+            if (items.length === 0) {
+                cartItemsEl.innerHTML = '<div class="empty-cart-msg">Votre panier est vide</div>';
+                btn.disabled = true;
+            } else {
+                items.forEach(item => {
+                    total += item.price * item.qty;
+                    count += item.qty;
+
+                    const el = document.createElement('div');
+                    el.className = 'cart-item';
+                    el.innerHTML = `
+                        <span><b>${item.qty}x</b> ${item.name}</span>
+                        <span>${(item.price * item.qty).toFixed(2)} €</span>
+                    `;
+                    cartItemsEl.appendChild(el);
+                });
+                btn.disabled = false;
+            }
+
+            totalEl.textContent = total.toFixed(2) + ' €';
+            countEl.textContent = count + ' articles';
+        }
+
+        async function sendOrder() {
+            const btn = document.getElementById('sendBtn');
+            const statusDiv = document.getElementById('status');
+
+            // Format recipe for printing
+            let receiptText = "COMMANDE CLIENT\n----------------\n";
+            let total = 0;
+            Object.values(cart).forEach(item => {
+                const lineTotal = item.price * item.qty;
+                total += lineTotal;
+                receiptText += `[${item.qty}] ${item.name.padEnd(16)} : ${lineTotal.toFixed(2)}€\n`;
+            });
+            receiptText += "\n----------------\n";
+            receiptText += `TOTAL             : ${total.toFixed(2)}€`;
 
             btn.disabled = true;
-            btn.textContent = 'Envoi...';
-            statusDiv.style.display = 'none';
+            btn.textContent = 'Envoi en cuisine...';
+            statusDiv.textContent = '';
+            statusDiv.className = '';
 
             try {
-                // Use relative URL so it works both on localhost and deployed version
-                const response = await fetch('/print', {
+                // Determine API URL based on how the page is opened
+                // If opened as a file (file://), connect to local backend
+                // If opened via server (http://), use relative path
+                const API_URL = window.location.protocol === 'file:'
+                    ? 'http://localhost:3000/print'
+                    : '/print';
+
+                const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ content }),
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: receiptText }),
                 });
 
-                const data = await response.json();
-
                 if (response.ok) {
-                    statusDiv.textContent = '✅ Commande envoyée avec succès !';
+                    statusDiv.textContent = '✅ Commande envoyée en cuisine !';
                     statusDiv.className = 'success';
-                    messageInput.value = '';
+                    cart = {};
+                    updateCartUI();
                 } else {
-                    throw new Error(data.error || 'Erreur inconnue');
+                    throw new Error('Erreur serveur');
                 }
             } catch (error) {
-                statusDiv.textContent = '❌ Erreur: ' + error.message;
+                statusDiv.textContent = '❌ Erreur de connexion';
                 statusDiv.className = 'error';
             } finally {
-                statusDiv.style.display = 'block';
-                btn.disabled = false;
-                btn.textContent = 'Envoyer';
-
-                // Hide success message after 3 seconds
-                if (statusDiv.className === 'success') {
-                    setTimeout(() => {
-                        statusDiv.style.display = 'none';
-                    }, 3000);
-                }
+                setTimeout(() => {
+                    btn.textContent = 'Confirmer la commande';
+                    if (Object.keys(cart).length > 0) btn.disabled = false;
+                }, 3000);
             }
         }
     </script>
